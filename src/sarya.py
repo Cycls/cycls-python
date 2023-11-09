@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request
 import uvicorn
+import UI
 
 class AIRequest:
     def __init__(self) -> None:
@@ -58,7 +59,6 @@ class SaryaClient:
         return {"status": "ok"}
 
 if __name__ == "__main__":
-    # from saryasdk import SaryaClient
     SaryaClient.token = "test-token"
     
     sarya = SaryaClient(nmae="Test", description="Test", version="0.0.1")
@@ -71,16 +71,12 @@ if __name__ == "__main__":
     async def main():
         # history that are related to you 
         # a way to add more history items 
-
-        res = res.messages
-        history = await res.get_history()
-
         # you do your thing
         return UI.Text("Hello World")
     
     # @sarya.on_shutdown
     # async def shutdown():
-    
+
     sarya.run()
 
 

@@ -1,1 +1,12 @@
+# general things to ignore
+build/
+dist/
+*.egg-info/
+*.egg
+*.py[cod]
+__pycache__/
+*.so
+*~
+
+# due to the way poetry works, we need to ignore the lock file
 poetry.lock
