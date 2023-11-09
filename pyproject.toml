@@ -1,9 +1,33 @@
-[tool.poetry]
+[project]
 name = "sarya-sdk"
 version = "0.0.1"
 description = "Sarya SDK to ingerate your Persona with Sarya Users"
-authors = ["ikhalid-alrasheed <khalid@cycls.io>"]
+authors = [ { name="Khalid Alrasheed", email="khalid@cycls.io" }]
 readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    'fastapi >=0.104.1',
+    'uvicorn >=0.24.0',
+    'openai >=0.28.1',
+    'asyncio >=3.4.3'
+    ]
+
+
+[project.urls]
+"Homepage" = "https://github.com/Cycls/SaryaSDK"
+"Bug Tracker" = "https://github.com/Cycls/SaryaSDK/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.poetry]
+name = "sarya-sdk"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -11,8 +35,3 @@ fastapi = "^0.104.1"
 uvicorn = "^0.24.0"
 openai = "^0.28.1"
 asyncio = "^3.4.3"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
