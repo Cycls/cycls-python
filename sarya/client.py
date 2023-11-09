@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 import uvicorn
-import UI
+from . import UI
 
 class AIRequest:
     def __init__(self) -> None:

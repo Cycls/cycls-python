@@ -8,8 +8,6 @@ __pycache__/
 *.so
 *~
 
-# due to the way poetry works, we need to ignore the lock file
-poetry.lock
 
 # ignore the virtual environment
 .pypirc
