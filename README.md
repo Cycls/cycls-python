@@ -19,3 +19,33 @@ The fastest way to build and publish Sarya LLM apps ⚡️
 ```bash
 pip install sarya-sdk
 ```
+
+## Example
+
+```python
+from sarya import SaryaClient, UI, SaryaResponse
+from fastapi import Request
+
+
+if __name__ == "__main__":
+    SaryaClient.token = "test-token"
+    
+    sarya = SaryaClient(
+            name="Test",
+            description="Test",
+            version="0.0.1",
+            url="https://www.xxxx.com"
+          )
+
+    @sarya.main
+    async def main(request:Request):
+        body = await request.body()
+
+        # ---------
+        # your logic
+        # ---------
+        
+        return SaryaResponse(message = UI.Text("Hello World"), meta={}) # you can add anything in meta
+    
+    sarya.run()
+```
