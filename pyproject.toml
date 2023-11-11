@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sarya-sdk"
-version = "0.0.2"
+version = "0.0.2.1"
 description = "Sarya SDK to ingerate your Persona with Sarya Users"
 authors = [ "Khalid Alrasheed <khalid@cycls.io>" ]
 packages = [{include = "sarya"}]
