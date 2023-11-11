@@ -17,6 +17,13 @@ class NewMessage(BaseModel):
     messages: list[dict[str, Any]] | None = None
     meta: dict[str, Any] | None = None
 
+
+from sarya import UI
+from pydantic import BaseModel 
+
+class Response(BaseModel):
+    message: UI.Text
+    meta: dict[str, Any] | None = None
 class AIRequest:
     def __init__(self) -> None:
         pass
@@ -68,6 +75,7 @@ class SaryaClient:
             raise Exception("Could not find main function")
 
 
+
     def _set_app(self):
         self.app = FastAPI(title=self.name, description=self.description, version=self.version)
         self.app.on_event("startup")(self._startup)
@@ -101,6 +109,7 @@ class SaryaClient:
         print("Sarya is running...")
 
     
+
     async def _shutdown(self):
         async with httpx.AsyncClient() as client:
             await client.post(SaryaClient.sarya_url + "/sdk/marid/off", json={"name": self.name, "description": self.description, "url": self.url})
