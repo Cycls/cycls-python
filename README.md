@@ -37,7 +37,7 @@ sarya.run()
 ## Features
 - **Simple:** One codebase to build and deploy across multiple platforms
 - **Monetization built-in**: Quick and easy payment button within the chat
-- **Multi-Media and UI Rendering**: Serve users with rich media content and interactive UI elements directly in the chat
+- **Multi-Media and UI Rendering**: Serve users with media content and interactive UI elements directly in the chat
 - **User Access**: Access to Sarya's fast growing user base
 - **Cross-Platform Deployment**: Write once, deploy everywhere. SaryaSDK supports iOS, Android, web, whatsapp, terminal and more
 - **Bring Your Own LLM**: Flexibility in LLMs, use OpenAI or open source alternatives
