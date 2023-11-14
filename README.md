@@ -41,7 +41,7 @@ sarya.run()
 - **User Access**: Access to Sarya's fast growing user base
 - **Cross-Platform Deployment**: Write once, deploy everywhere. SaryaSDK supports iOS, Android, web, whatsapp, terminal and more
 - **Bring Your Own LLM**: Flexibility in LLMs, use OpenAI or open source alternatives
-- **Spin Off Your Own App**: Utilize our client SDKs to develop your own Sarya experinces on the web/iOS/whatsapp..etc
+- **White-label Option**: Utilize our client SDKs to develop your own Sarya experinces
 
 
 
