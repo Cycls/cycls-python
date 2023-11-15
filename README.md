@@ -34,6 +34,8 @@ def main(x):
 sarya.run()
 ```
 
+[![Try with Replit Badge](https://replit.com/badge?caption=Try%20on%20Replit)](https://replit.com/@ikhalid-alrashe/Sarya)
+
 ## Features
 - **Simple:** One codebase to build and deploy across multiple platforms
 - **Monetization built-in**: Quick and easy payment button within the chat
