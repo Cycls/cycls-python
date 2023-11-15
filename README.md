@@ -11,7 +11,7 @@ The fastest way to build and publish Sarya LLM apps ⚡️
 </p>
 
 <p align="center">
-<a href="https://sarya.com/docs" target="_blank"> Docs </a>
+<a href="https://docs.sarya.com" target="_blank"> Docs </a>
 |
 <a href="https://sarya.com" target="_blank"> Homepage </a>
 </p>
