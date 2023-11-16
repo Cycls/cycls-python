@@ -11,7 +11,7 @@ The fastest way to build and publish Sarya LLM apps ⚡️
 </p>
 
 <p align="center">
-<a href="https://sarya.com/docs" target="_blank"> Docs </a>
+<a href="https://docs.sarya.com" target="_blank"> Docs </a>
 |
 <a href="https://sarya.com" target="_blank"> Homepage </a>
 </p>
@@ -33,6 +33,8 @@ def main(x):
 
 sarya.run()
 ```
+
+[![Try with Replit Badge](https://replit.com/badge?caption=Try%20on%20Replit)](https://replit.com/@ikhalid-alrashe/Sarya)
 
 ## Features
 - **Simple:** One codebase to build and deploy across multiple platforms
