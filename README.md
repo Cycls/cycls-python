@@ -25,8 +25,7 @@ pip install sarya-sdk
 ```python
 from sarya import SaryaClient, UI
 
-sarya = SaryaClient(name="hello",description="hello world marid",
-                    url="https://link.to.your.app")
+sarya = SaryaClient(name="hello world",handler="hello",description="hello world marid")
 
 def main(x):
     return UI.Text("Hello World!")
