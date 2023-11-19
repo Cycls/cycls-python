@@ -4,13 +4,13 @@ from enum import Enum
 from typing import Any
 
 class UITypes(str, Enum):
-    Text = "Text"
-    Cards = "Cards"
-    Pay = "ApplePay"
-    Card = "Card"
-    HStack = "HStack"
-    VStack = "VStack"
-    Image = "Image"
+    Text = "text"
+    Cards = "cards"
+    Pay = "apple_pay"
+    Card = "card"
+    HStack = "h_stack"
+    VStack = "v_stack"
+    Image = "image"
 
 
 

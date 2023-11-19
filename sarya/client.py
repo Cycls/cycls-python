@@ -1,29 +1,24 @@
 from fastapi import FastAPI, Request
 import uvicorn
 import httpx
+from pydantic import BaseModel 
+
 from typing import Any
 from functools import partial
 import inspect 
 import importlib 
 
 from sarya import UI
-from pydantic import BaseModel 
-
-class Response(BaseModel):
-    message: UI.Text
-    meta: dict[str, Any] | None = None
+from .constant import SARYA_URL
 
 class NewMessage(BaseModel):
-    messages: list[dict[str, Any]] | None = None
+    messages: list[dict[str, Any]] 
     meta: dict[str, Any] | None = None
-
-
-from sarya import UI
-from pydantic import BaseModel 
 
 class Response(BaseModel):
-    message: UI.Text
+    messages: list[UI.Text| UI.Image]
     meta: dict[str, Any] | None = None
+
 class AIRequest:
     def __init__(self) -> None:
         pass
@@ -44,17 +39,20 @@ class AIRequest:
 
 class SaryaClient:
     token: str | None = None
-    sarya_url = "https://saryahai.ikhalid-alrashe.repl.co"
+
     def __init__(self,
-        name:str|None = None,
+        handler:str,*,
+        name:str|None ,
         description:str|None = None,
-        version:str|None = None,
-        url:str|None = "http://0.0.0.0:8000",
+        version:str|None = None
         ):
+        """
+
+        """
+        self.handler = handler
         self.name = name
-        self.description = description
-        self.version = version
-        self.url = url
+        self.description = description or "No description provided"
+        self.version = version or "0.0.1"
         self._set_app()
 
 
@@ -67,7 +65,7 @@ class SaryaClient:
             caller_module_name = caller_module_info.__name__
             module = importlib.import_module(caller_module_name)
     
-            main_func = getattr(module, "main")
+            main_func = getattr(module, main)
             self.main_function = main_func
             self.app.post("/main")(self.main)
             uvicorn.run(self.app, host=host, port=port)
@@ -79,44 +77,45 @@ class SaryaClient:
     def _set_app(self):
         self.app = FastAPI(title=self.name, description=self.description, version=self.version)
         self.app.on_event("startup")(self._startup)
-        self.app.get("/health_check")(self._check)
+        self.app.get("/")(self._check)
         self.app.on_event("shutdown")(self._shutdown)
     
     def main(self, payload:NewMessage):
         # add func to be post route
         if (params:=len(inspect.signature(self.main_function).parameters)) == 2:
-            print("Params 2")
             output = self.main_function(payload.messages, payload.meta)
         elif params == 1:
-            print("Params 1")
             output = self.main_function(payload.messages)
         else:
-            print("No params")
             output = self.main_function()
         if isinstance(output, Response):
             return output
-        elif isinstance(output, UI.Text):
-            output = Response(message=output)
+        elif isinstance(output, UI.Text) or isinstance(output, UI.Image):
+            return Response(messages=[output])
+        elif isinstance(output, list):
+            return Response(messages=output)
         return Response(**output)
 
     
     async def _startup(self):
         async with httpx.AsyncClient() as client:
-            url = SaryaClient.sarya_url + "/sdk/marid"
-            print(f"Sending request to {url}")
-            response = await client.post(url, json={"name": self.name, "description": self.description, "url": self.url})
-        print(response.text)  
+            url = SARYA_URL + f"marid/{self.handler}/on"
+            headers = {"x-marid-auth": self.token}
+            response = await client.post(url, json={"name": self.name, "description": self.description}, headers=headers)
+        response.raise_for_status()
         print("Sarya is running...")
 
     
 
     async def _shutdown(self):
         async with httpx.AsyncClient() as client:
-            await client.post(SaryaClient.sarya_url + "/sdk/marid/off", json={"name": self.name, "description": self.description, "url": self.url})
+            url = SARYA_URL + f"marid/{self.handler}/off"
+            headers = {"x-marid-auth": self.token}
+            await client.post(url, json={"name": self.name, "description": self.description}, headers=headers)
         print("Sarya is shutting down...")
 
-    def _check(self):
-        return {"status": "ok"}
+    async def _check(self):
+        return {"data":{"status": "OK"}}
 
 
 
