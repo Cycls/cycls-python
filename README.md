@@ -11,7 +11,7 @@ The fastest way to build and publish Sarya LLM apps ⚡️
 </p>
 
 <p align="center">
-<a href="https://sarya.com/docs" target="_blank"> Docs </a>
+<a href="https://docs.sarya.com" target="_blank"> Docs </a>
 |
 <a href="https://sarya.com" target="_blank"> Homepage </a>
 </p>
@@ -23,29 +23,28 @@ pip install sarya-sdk
 ## Example
 
 ```python
-from sarya import SaryaClient, UI, SaryaResponse
-from fastapi import Request
+from sarya import SaryaClient, UI
 
+sarya = SaryaClient(name="hello",description="hello world marid",
+                    url="https://link.to.your.app")
 
-if __name__ == "__main__":
-    SaryaClient.token = "test-token"
-    
-    sarya = SaryaClient(
-            name="Test",
-            description="Test",
-            version="0.0.1",
-            url="https://www.xxxx.com"
-          )
+def main(x):
+    return UI.Text("Hello World!")
 
-    @sarya.main
-    async def main(request:Request):
-        body = await request.body()
-
-        # ---------
-        # your logic
-        # ---------
-        
-        return SaryaResponse(message = UI.Text("Hello World"), meta={}) # you can add anything in meta
-    
-    sarya.run()
+sarya.run()
 ```
+
+[![Try with Replit Badge](https://replit.com/badge?caption=Try%20on%20Replit)](https://replit.com/@ikhalid-alrashe/Sarya)
+
+## Features
+- **Simple:** One codebase to build and deploy across multiple platforms
+- **Monetization built-in**: Quick and easy payment button within the chat
+- **Multi-Media and UI Rendering**: Serve users with media content and interactive UI elements in the chat
+- **User Access**: Access to Sarya's fast growing user base
+- **Cross-Platform Deployment**: Write once, deploy everywhere. SaryaSDK supports iOS, Android, web, whatsapp, terminal and more
+- **Bring Your Own LLM**: Flexibility in LLMs, use OpenAI or open source alternatives
+- **White-label Option**: Utilize our client SDKs to develop your own Sarya experinces
+
+
+
+

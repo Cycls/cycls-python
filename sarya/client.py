@@ -105,7 +105,7 @@ class SaryaClient:
         response.raise_for_status()
         print("Sarya is running...")
 
-    
+
 
     async def _shutdown(self):
         async with httpx.AsyncClient() as client:
