@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sarya-sdk"
-version = "0.0.2.1"
+version = "0.0.2.6"
 description = "Sarya SDK to ingerate your Persona with Sarya Users"
 authors = [ "Khalid Alrasheed <khalid@cycls.io>" ]
 packages = [{include = "sarya"}]
@@ -9,9 +9,12 @@ packages = [{include = "sarya"}]
 python = "^3.10"
 fastapi = "^0.104.1"
 uvicorn = "^0.24.0"
-openai = "^0.28.1"
 asyncio = "^3.4.3"
 httpx = "^0.25.1"
+pydantic-settings = "^2.1.0"
+
+[tool.poetry.group.dev.dependencies]
+black = {version = "^23.11.0", allow-prereleases = true}
 
 [build-system]
 requires = ["poetry-core"]

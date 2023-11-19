@@ -8,6 +8,7 @@ __pycache__/
 *.so
 *~
 
+.venv
 
 # ignore the virtual environment
 .pypirc
