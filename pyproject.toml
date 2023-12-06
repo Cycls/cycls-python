@@ -1,17 +1,19 @@
 [tool.poetry]
-name = "sarya-sdk"
-version = "0.0.2.6"
-description = "Sarya SDK to ingerate your Persona with Sarya Users"
+name = "sarya"
+version = "0.0.2.1"
+description = "Sarya SDK to ingerate your Marid with Sarya Users"
 authors = [ "Khalid Alrasheed <khalid@cycls.io>" ]
 packages = [{include = "sarya"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 fastapi = "^0.104.1"
 uvicorn = "^0.24.0"
 asyncio = "^3.4.3"
-httpx = "^0.25.1"
 pydantic-settings = "^2.1.0"
+certifi = "^2023.11.17"
+httpx = "^0.25.2"
+pydantic = "^2.5.2"
 
 [tool.poetry.group.dev.dependencies]
 black = {version = "^23.11.0", allow-prereleases = true}
