@@ -38,7 +38,6 @@ class Sarya:
         if caller_module_info is not None:
             caller_module_name = caller_module_info.__name__
             module = importlib.import_module(caller_module_name)
-
             main_func = getattr(module, main)
             self.main_function = main_func
             self.app.post("/main")(self.main)
