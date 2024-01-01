@@ -1,23 +1,25 @@
-
-
 <p align="center">
-<a href="https://sarya.com"><img src="https://github.com/Cycls/SaryaSDK/assets/58256600/b2308cba-4777-4f37-bf1e-e1106412ecee" alt="SaryaSDK logo"></a>
+<img style="height: 75px;" src="https://www.sarya.com/img/logo.svg" alt="logo" />
+<!-- <img style="height: 75px;" src="https://www.sarya.com/img/sarya.svg" alt="sarya" /> -->
 </p>
 
+
 <p align="center">
-<b>SaryaSDK - the universal access layer</b>
+<b>Sarya - Generative UI for your AI</b>
 <br/><br/>
-The fastest way to build and publish Sarya LLM apps ⚡️
+Design, publish, and share customer facing AI apps with Sarya ⚡️
 </p>
 
 <p align="center">
-<a href="https://docs.sarya.com" target="_blank"> Docs </a>
+<a href="https://sarya.com/docs" target="_blank"> Docs </a>
 |
 <a href="https://sarya.com" target="_blank"> Homepage </a>
+|
+<a href="https://platform.sarya.com" target="_blank"> Platform </a>
 </p>
 
 ```bash
-pip install sarya-sdk
+pip install sarya
 ```
 
 ## Example
@@ -25,24 +27,24 @@ pip install sarya-sdk
 ```python
 from sarya import Sarya, UI
 
-sarya = Sarya(key="<YourKry>")
+sarya = Sarya("SECRET")
 
-def main():
+@sarya.name("@my-app")
+def ai():
     return UI.Text("Hello World!")
 
 sarya.run()
 ```
 
-[![Try with Replit Badge](https://replit.com/badge?caption=Try%20on%20Replit)](https://replit.com/@ikhalid-alrashe/Sarya)
 
 ## Features
-- **Simple:** One codebase to build and deploy across multiple platforms
-- **Monetization built-in**: Quick and easy payment button within the chat
-- **Multi-Media and UI Rendering**: Serve users with media content and interactive UI elements in the chat
-- **User Access**: Access to Sarya's fast growing user base
-- **Cross-Platform Deployment**: Write once, deploy everywhere. SaryaSDK supports iOS, Android, web, whatsapp, terminal and more
-- **Bring Your Own LLM**: Flexibility in LLMs, use OpenAI or open source alternatives
-- **White-label Option**: Utilize our client SDKs to develop your own Sarya experiences
+- **100% control over your code**: Maintain your app logic and data on your infrastructure.
+- **Bring Your Own LLM**: Flexibility in LLMs, use OpenAI or any open source alternative.
+- **Generative UI**: Quickly build powerful UIs that integrate seamlessly with your AI logic.
+- **Instant sharing**: Instantly share your customer-facing AI app.
+- **Data & analytics**: Measure app's performance. Use data to finetune AI for better results.
+- **Cross-platform**: Sarya currently is web-based. Mobile support for iOS and Android is underway.
+- **Multimodal I/O**: Starting with text input, and expanding to voice, image, and video data inputs.
 
 
 
