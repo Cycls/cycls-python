@@ -7,7 +7,7 @@
 <p align="center">
 <b>Sarya - Generative UI for your AI</b>
 <br/><br/>
-Design, publish, and share customer facing AI apps with Sarya ⚡️
+Design, publish, and share end user AI apps with Sarya ⚡️
 </p>
 
 <div align="center">
