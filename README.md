@@ -45,7 +45,6 @@ def app():
 sarya.run()
 ```
 
-
 ## Features
 - **100% control over your code**: Maintain your app logic and data on your infrastructure.
 - **Bring your own LLM**: Flexibility in LLMs, use OpenAI or any open source alternative.
@@ -55,6 +54,6 @@ sarya.run()
 - **Cross-platform**: Sarya currently is web-based. Mobile support for iOS and Android is underway.
 - **Multimodal I/O**: Starting with text input, and expanding to voice, image, and video data inputs.
 
+## Generative UI?
 
-
-
+**Generative UI** (User Interface) is simply when AI is constantly designing or improving user interfaces in response to dynamic user behavior. Generative UIs are an upgrade in UI development, mirroring the rise of generative AI.
