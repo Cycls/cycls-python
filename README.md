@@ -48,7 +48,7 @@ sarya.run()
 
 ## Features
 - **100% control over your code**: Maintain your app logic and data on your infrastructure.
-- **Bring Your Own LLM**: Flexibility in LLMs, use OpenAI or any open source alternative.
+- **Bring your own LLM**: Flexibility in LLMs, use OpenAI or any open source alternative.
 - **Generative UI**: Quickly generate rich UIs that integrate seamlessly with your AI logic.
 - **Instant sharing**: Instantly share your customer-facing AI app.
 - **Data & analytics**: Measure app's performance. Use data to finetune AI for better results.
