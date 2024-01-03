@@ -38,8 +38,8 @@ from sarya import Sarya, UI
 
 sarya = Sarya("SECRET")
 
-@sarya.name("@my-app")
-def ai():
+@sarya("@my-app")
+def app():
     return UI.Text("Hello World!")
 
 sarya.run()
