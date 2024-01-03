@@ -10,6 +10,15 @@
 Design, publish, and share customer facing AI apps with Sarya ⚡️
 </p>
 
+<div align="center">
+    <a href="https://discord.gg/BMnaMatDC7" target="_blank" rel="noopener noreferrer">
+        <img loading="lazy" src="https://img.shields.io/discord/1175782747164389466" alt="Discord" class="img_ev3q" style="display: inline;">
+    </a>
+    <a href="https://GitHub.com/cycls/sarya-python/stargazers/" target="_blank" rel="noopener noreferrer">
+        <img loading="lazy" src="https://img.shields.io/github/stars/cycls/sarya-python.svg?style=social&label=Star&maxAge=2400" alt="GitHub stars" class="img_ev3q" style="display: inline;">
+    </a>
+</div>
+
 <p align="center">
 <a href="https://sarya.com/docs" target="_blank"> Docs </a>
 |
