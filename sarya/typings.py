@@ -48,7 +48,7 @@ class ConversationSession(BaseModel):
 
 
 class NewMessage(BaseModel):
-    messages: list[Message]
+    message: Message
     session : ConversationSession
     meta: dict[str, Any] | None = None
 
