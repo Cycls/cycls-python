@@ -1,90 +1,138 @@
 from __future__ import annotations
-from fastapi import FastAPI, Request, APIRouter
-from fastapi.responses import JSONResponse
-import uvicorn
+from inspect import iscoroutinefunction, signature, Parameter, _empty
+from typing import Callable, Any 
+from datetime import datetime
+import logging 
 
-import inspect
-import importlib
+from socketio import AsyncClient
+import asyncio
+import re
 
-from sarya import UI
-from sarya.request_typings import NewMessage, Response
-from sarya.signature import HMAS
+from .UI import Text, Image
+from .configuration import AppConfiguration
+from .typings import InputTypeHint, NewMessage, ConversationID, ConversationSession, Messages, Meta, Response
 
-
-class AIRequest:
-    def __init__(self) -> None:
-        pass
-
-    async def __call__(self, request: Request):
-        self.request = request
-        self.j = await request.json()
-        return self
-
-    @property
-    def messages(self):
-        return self.j["messages"]
-
+HANDLER_PATTERN = "[a-zA-Z][a-zA-Z0-9_-]{0,25}"
 
 
 class Sarya:
-
-    def __init__(self, key: str | None = None):
+    def __init__(self, key: str | None = None, log_level="info", logger:bool=False):
         self.key = key
-        self._set_app()
+        self.sio = AsyncClient(
+            reconnection_attempts=0,
+            reconnection_delay=1,
+            reconnection_delay_max=25,
+            logger=True,
+        )
+        self.app_handlers = []
+        self.sio.on("connection_log")(self.connection_log)
+        self._set_logger(log_level="info", logger=False)
 
-    def run(self, main: str | None = "main", host: str = "0.0.0.0", port: int = 8000):
-        caller_frame = inspect.currentframe().f_back
-        caller_module_info = inspect.getmodule(caller_frame)
-        if caller_module_info is not None:
-            caller_module_name = caller_module_info.__name__
-            module = importlib.import_module(caller_module_name)
+    def _set_logger(self, logger:bool, log_level:str):
+        if not logger:
+            self.logger = None
+            return 
+        
+    async def _run(self):
+        headers = {
+            "x-dev-secret": self.key,
+            "handlers": "_".join(self.app_handlers),
+        }
+        await self.sio.connect(
+            # "https://api.sarya.com",
+            "http://localhost:8001",
+            headers=headers,
+            transports=["websocket"],
+            socketio_path="/app-socket/socket.io",
+        )
+        await self.sio.wait()
 
-            main_func = getattr(module, main)
-            self.main_function = main_func
-            self.app.post("/main")(self.main)
-            app = FastAPI()
-            app.include_router(self.app)
-            uvicorn.run(app, host=host, port=port)
+    def run(self):
+        asyncio.run(self._run())
+
+    def _process_response(self, response):
+        if isinstance(response, Response):
+            return response
+        elif isinstance(response, Text) or isinstance(response, Image):
+            return Response(messages=[response])
+        elif isinstance(response, list):
+            return Response(messages=response)
+        return Response(messages=[response])
+    
+    def _parameter_type_hint(self, param:Parameter) -> InputTypeHint:
+        hint = param.annotation
+        if hint == _empty :
+            return InputTypeHint.EMPTY
+        elif hint == Messages:
+            return InputTypeHint.MESSAGES
+        elif hint == ConversationSession:
+            return InputTypeHint.SESSION
+        elif hint == ConversationID:
+            return InputTypeHint.CONVERSATION_ID
+        elif hint == NewMessage:
+            return InputTypeHint.FULL
         else:
-            raise Exception("Could not find main function")
+            raise Exception("")
 
-    def _set_app(self):
-        self.app = APIRouter()
-        self.app.get("/subscribe")(self._subscribe)
+    def _get_parameter_value(self, hint:InputTypeHint, obj:NewMessage) -> Any:
+        if hint == InputTypeHint.EMPTY or hint == InputTypeHint.FULL:
+            return obj
+        elif hint == InputTypeHint.SESSION:
+            return obj.session
+        elif hint == InputTypeHint.CONVERSATION_ID:
+            return obj.session.id
+        elif hint == InputTypeHint.MESSAGES:
+            return obj.messages
+        elif hint == InputTypeHint.USER:
+            return None 
+        
+    def process_handler_input(self, func:Callable, user_message:NewMessage):
+        kwargs = {}
+        for key, value in signature(func).parameters.items():
+            type_hint = self._parameter_type_hint(value)
+            kwargs[key] = self._get_parameter_value(hint=type_hint, obj=user_message)
+        return kwargs
 
-    async def main(self, request:Request, payload: NewMessage):
-        try:
-            await self._hmas(request)
-        except Exception as e:
-            return JSONResponse(
-                {"error": "request was not sign correctly"}, status_code=401
+    def extract_handler_name(self, handler: str) -> str | None:
+        name = re.search(rf"^\@({HANDLER_PATTERN})$", handler.strip().lower())
+        if not name:
+            raise Exception(
+                "Your app handler has to start with @ and composed only of letters, numbers and '-'"
             )
-        if (params := len(inspect.signature(self.main_function).parameters)) == 2:
-            output = self.main_function(payload.messages, payload.meta)
-        elif params == 1:
-            output = self.main_function(payload.messages)
-        else:
-            output = self.main_function()
-        if isinstance(output, Response):
-            return output
-        elif isinstance(output, UI.Text) or isinstance(output, UI.Image):
-            return Response(messages=[output])
-        elif isinstance(output, list):
-            return Response(messages=output)
-        return Response(messages=[output])
+        name = name.group(1)
+        return re.sub(r"_", "-", name)
 
-    async def _subscribe(self, request: Request):
-        try:
-            await self._hmas(request)
-        except Exception as e:
-            return JSONResponse(
-                {"error": "request was not sign correctly"}, status_code=401
-            )
-        return {"data": {"secret": self.key}}
+    def app(self, handler: str, *, config:AppConfiguration|None = None):
+        """
+        """
+        app_handler = self.extract_handler_name(handler)
 
-    async def _hmas(self, request: Request):
-        sign = await HMAS.verify(self.key, request)
-        if sign:
-            return True
-        else:
-            raise Exception("Request was not signed correctly")
+        def decorator(func):
+            self.app_handlers.append(app_handler)
+
+            @self.sio.on(app_handler)
+            async def wrapper(data):
+                try:
+                    user_message = NewMessage(**data)
+                except Exception as e:
+                    print(e)
+                    print(f"we got error while trying to process {data}")
+                    return Response(messages=[Text("something went wrong")]).model_dump(
+                        mode="json"
+                    )
+                if iscoroutinefunction(func):
+                    response = await func(
+                        **self.process_handler_input(func, user_message)
+                    )
+                else:
+                    response = func(**self.process_handler_input(func, user_message))
+                return self._process_response(response).model_dump(mode="json")
+
+            return wrapper
+
+        return decorator
+
+    async def connection_log(self, data):
+        print(
+            f"{datetime.now()}: HANDLER|{data.get('handler')} -> {data.get('message')}. STATUS: {data.get('status')}"
+        )
