@@ -6,7 +6,7 @@ from datetime import datetime
 
 class InputTypeHint(Enum):
     EMPTY = auto()
-    MESSAGES = auto()
+    MESSAGE = auto()
     CONVERSATION_ID = auto()
     USER = auto()
     SESSION = auto()
@@ -36,7 +36,7 @@ class Message(BaseModel):
         else:
             raise ValueError(f"Unknown content type: {content_type}")
 
-Messages = list[Message] 
+
 Meta = dict[str, Any] 
 ConversationID = str
 

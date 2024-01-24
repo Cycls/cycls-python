@@ -1,5 +1,5 @@
 from sarya import Sarya, UI, AppConfiguration
-from sarya.typings import Messages, ConversationSession
+from sarya.typings import ConversationSession
 
 client = Sarya("sk-123")
 config = AppConfiguration()
