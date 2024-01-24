@@ -45,7 +45,7 @@ class Sarya:
             socketio_path="/app-socket/socket.io",
         )
         for app in self.apps_config:
-            self.sio.emit("connect_app", data=app.model_dump(mode="json"))
+            await self.sio.emit("connect_app", data=app.model_dump(mode="json"))
         await self.sio.wait()
 
     def run(self, release:str | None = None):
