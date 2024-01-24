@@ -26,7 +26,6 @@ class Sarya:
         )
         self.apps_config:list[AppConfiguration] = []
         self.sio.on("connection_log")(self.connection_log)
-        self.sio.on("config")(self.get_config)
         self._set_logger(log_level="info", logger=False)
 
     def _set_logger(self, logger:bool, log_level:str):
@@ -45,6 +44,8 @@ class Sarya:
             transports=["websocket"],
             socketio_path="/app-socket/socket.io",
         )
+        for app in self.apps_config:
+            self.sio.emit("connect_app", data=app.model_dump(mode="json"))
         await self.sio.wait()
 
     def run(self, release:str | None = None):
@@ -122,7 +123,7 @@ class Sarya:
         """
         app_handler = self.extract_handler_name(handler)
         config = AppConfiguration(
-            handler=handler,
+            handler=app_handler,
             name=name,
             test=test,
             image=image,
@@ -159,6 +160,3 @@ class Sarya:
         print(
             f"{datetime.now()}: HANDLER|{data.get('handler')} -> {data.get('message')}. STATUS: {data.get('status')}"
         )
-
-    async def get_config(self):
-        return [c.model_dump(mode="json") for c in self.apps_config]

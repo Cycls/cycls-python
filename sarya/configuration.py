@@ -4,17 +4,16 @@ class AppNameLocale(BaseModel):
     ar: str | None = None
     en: str | None = None
 
-class ImageUploader:
-    def __inti__(self, path:str):
-        pass
+class ImageUploader(BaseModel):
+    path:str
 
 class AppConfiguration(BaseModel):
     handler:str
-    name: str | AppNameLocale = None,
+    name: str | AppNameLocale| None = None,
     test: bool = False,
-    image: str | ImageUploader = None, 
+    image: str | ImageUploader| None = None, 
     release: str | None = None,
-    description: str = None,
+    description: str| None = None,
     
 
     @field_validator("name", mode="before")
@@ -24,7 +23,8 @@ class AppConfiguration(BaseModel):
             return AppNameLocale(en=name)
         elif isinstance(name, AppNameLocale):
             return name
+   
     @field_validator("image", mode="before")
     @classmethod
-    def process_image(self, image):
+    def process_image(cls, image:str | ImageUploader) -> str:
         return image
