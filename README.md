@@ -34,15 +34,15 @@ pip install sarya
 ## Example
 
 ```python
-from sarya import Sarya, UI
+from cycls import Cycls, UI
 
-sarya = Sarya("SECRET")
+client = Cycls("SECRET")
 
-@sarya("@my-app")
+@client.app("@my-app")
 def app():
     return UI.Text("Hello World!")
 
-sarya.run()
+client.run()
 ```
 
 ## Features
