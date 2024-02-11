@@ -1,13 +1,13 @@
+<!-- 
 <p align="center">
 <img style="height: 75px;" src="https://www.sarya.com/img/logo.svg" alt="logo" />
-<!-- <img style="height: 75px;" src="https://www.sarya.com/img/sarya.svg" alt="sarya" /> -->
 </p>
-
+-->
 
 <p align="center">
-<b>Sarya - Generative UI for your AI</b>
+<b>Cycls - Generative UI for your AI</b>
 <br/><br/>
-Design, publish, and share end user AI apps with Sarya ⚡️
+Design, publish, and share end user AI apps with Cycls ⚡️
 </p>
 
 <div align="center">
