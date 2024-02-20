@@ -1,11 +1,12 @@
-from sarya import Sarya, UI, AppConfiguration
+from sarya import Sarya, UI
 from sarya.typings import ConversationSession
 
 client = Sarya("sk-123")
 
-@client.app("@hello_Khalid2")
-def hello_02483733(x:ConversationSession):
-    return UI.Text("Hello Umair!")
+
+@client.app("@hello-shah", description="This is some description")
+def hello_shah(x:ConversationSession):
+    return UI.Text("Hello Shah!")
 
 
 client.run()
