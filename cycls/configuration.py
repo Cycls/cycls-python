@@ -9,12 +9,12 @@ class ImageUploader(BaseModel):
 
 class AppConfiguration(BaseModel):
     handler:str
-    name: str | AppNameLocale| None = None,
-    test: bool = False,
-    image: str | ImageUploader| None = None, 
-    release: str | None = None,
-    description: str| None = None,
-    
+    name: str | None = None
+    test: bool = False
+    image: str | None = None
+    release: str | None = None
+    description: str| None = None
+
 
     @field_validator("name", mode="before")
     @classmethod
@@ -23,7 +23,7 @@ class AppConfiguration(BaseModel):
             return AppNameLocale(en=name)
         elif isinstance(name, AppNameLocale):
             return name
-   
+
     @field_validator("image", mode="before")
     @classmethod
     def process_image(cls, image:str | ImageUploader) -> str:

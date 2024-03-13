@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "sarya"
+name = "cycls"
 version = "0.0.3.0"
-description = "Sarya SDK to ingerate your Marid with Sarya Users"
-authors = [ "Khalid Alrasheed <khalid@cycls.io>" ]
-packages = [{include = "sarya"}]
+description = "Cycls SDK to ingerate your Marid with Sarya Users"
+authors = ["Khalid Alrasheed <khalid@cycls.io>"]
+packages = [{ include = "cycls" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -11,11 +11,15 @@ asyncio = "^3.4.3"
 certifi = "^2023.11.17"
 httpx = "^0.25.2"
 pydantic = "^2.5.2"
-python-socketio = {extras = ["asyncio-client"], version = "^5.10.0"}
+python-socketio = { extras = ["asyncio-client"], version = "^5.10.0" }
 
 [tool.poetry.group.dev.dependencies]
-black = {version = "^23.11.0", allow-prereleases = true}
+black = { version = "^23.11.0", allow-prereleases = true }
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

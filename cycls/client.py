@@ -2,7 +2,7 @@ from __future__ import annotations
 from inspect import iscoroutinefunction, signature, Parameter, _empty
 from typing import Callable, Any
 from datetime import datetime
-import logging
+
 
 from socketio import AsyncClient
 import asyncio
@@ -12,27 +12,19 @@ from .UI import Text, Image
 from .configuration import AppConfiguration, AppNameLocale, ImageUploader
 from .typings import (
     InputTypeHint,
-    NewMessage,
+    UserMessage,
     ConversationID,
     ConversationSession,
     Meta,
     Response,
     Message,
+    MessageContent
 )
-from uuid import uuid4
-
-HANDLER_PATTERN = "[a-zA-Z][a-zA-Z0-9_-]{0,25}"
+from .static import HANDLER_PATTERN, CYCLS_URL
 
 
-async def get_ai_response():
-    await asyncio.sleep(1)
-    for word in ["Hi", ", ", "there ", "\n", "How ", "are ", "you", "?\n"]:
-        await asyncio.sleep(1)
-        yield word
-
-
-class Sarya:
-    def __init__(self, key: str | None = None, log_level="info", logger: bool = False):
+class Cycls:
+    def __init__(self, key: str | None = None):
         self.key = key
         self.sio = AsyncClient(
             reconnection_attempts=0,
@@ -41,56 +33,31 @@ class Sarya:
             logger=True,
         )
         self.apps_config: list[AppConfiguration] = []
+        self.sio.on("connect")(self.re_connect)
         self.sio.on("connection_log")(self.connection_log)
-        self._set_logger(log_level="info", logger=False)
 
-    def _set_logger(self, logger: bool, log_level: str):
-        if not logger:
-            self.logger = None
-            return
+
+    async def re_connect(self):
+        for app in self.apps_config:
+            await self.sio.emit("connect_app", data=app.model_dump(mode="json"))
+        print("CONNECTING")
+
 
     async def _run(self):
         headers = {
             "x-dev-secret": self.key,
         }
         await self.sio.connect(
-            # "https://api.sarya.com",
-            "http://localhost:8004",
+            CYCLS_URL,
             headers=headers,
             transports=["websocket"],
             socketio_path="/app-socket/socket.io",
         )
-        for app in self.apps_config:
-            await self.sio.emit("connect_app", data=app.model_dump(mode="json"))
         await self.sio.wait()
 
-    def run(self, release: str | None = None):
-        if release:
-            self._set_global_release(release)
+
+    def publish(self):
         asyncio.run(self._run())
-
-    def _set_global_release(self, release: str) -> None:
-        apps = []
-        for app in self.apps_config:
-            app.release = release
-            apps.append(app)
-        self.apps_config = apps
-
-    async def message(self, data):
-        uuid = uuid4()
-        async for item in get_ai_response():
-            await self.sio.emit(
-                "response",
-                {
-                    "content": {"type": "text", "text": item},
-                    "id": str(uuid),
-                    "user_message_id": data.id,
-                    "finish_reason": None,
-                },
-            )
-        await self.sio.emit(
-            "response", {"finish_reason": "stop", "user_message_id": data.id, "content":None}
-        )
 
     def _process_response(self, response):
         if isinstance(response, Response):
@@ -108,16 +75,17 @@ class Sarya:
             Message: InputTypeHint.MESSAGE,
             ConversationSession: InputTypeHint.SESSION,
             ConversationID: InputTypeHint.CONVERSATION_ID,
-            NewMessage: InputTypeHint.FULL,
+            UserMessage: InputTypeHint.FULL,
+            MessageContent: InputTypeHint.MESSAGE_CONTENT,
         }
         if output := mapping.get(hint):
             return output
         else:
             raise Exception("")
 
-    def _get_parameter_value(self, hint: InputTypeHint, obj: NewMessage) -> Any:
-        if hint == InputTypeHint.EMPTY or hint == InputTypeHint.FULL:
-            return obj
+    def _get_parameter_value(self, hint: InputTypeHint, obj: user_message) -> Any:
+        if  hint == InputTypeHint.MESSAGE_CONTENT:
+            return obj.message.content
         elif hint == InputTypeHint.SESSION:
             return obj.session
         elif hint == InputTypeHint.CONVERSATION_ID:
@@ -126,15 +94,17 @@ class Sarya:
             return obj.message
         elif hint == InputTypeHint.USER:
             return None
+        elif hint == InputTypeHint.EMPTY or hint == InputTypeHint.FULL:
+            return obj
 
-    def process_handler_input(self, func: Callable, user_message: NewMessage):
+    def process_handler_input(self, func: Callable, message: UserMessage):
         kwargs = {}
         for key, value in signature(func).parameters.items():
             type_hint = self._parameter_type_hint(value)
-            kwargs[key] = self._get_parameter_value(hint=type_hint, obj=user_message)
+            kwargs[key] = self._get_parameter_value(hint=type_hint, obj=message)
         return kwargs
 
-    def extract_handler_name(self, handler: str) -> str | None:
+    def extract_handler_name(self, handler: str) -> str:
         name = re.search(rf"^\@({HANDLER_PATTERN})$", handler.strip().lower())
         if not name:
             raise Exception(
@@ -146,21 +116,11 @@ class Sarya:
     def app(
         self,
         handler: str,
-        name: str | AppNameLocale = None,
-        test: bool = False,
-        image: str | ImageUploader = None,
-        release: str | None = None,
-        description: str = None,
     ):
         """ """
         app_handler = self.extract_handler_name(handler)
         config = AppConfiguration(
-            handler=app_handler,
-            name=name,
-            test=test,
-            image=image,
-            release=release,
-            description=description,
+            handler=app_handler
         )
 
         def decorator(func):
@@ -169,21 +129,17 @@ class Sarya:
             @self.sio.on(app_handler)
             async def wrapper(data):
                 try:
-                    user_message = NewMessage(**data)
+                    message = UserMessage(sio=self.sio, **data)
                 except Exception as e:
                     print(e)
                     print(f"we got error while trying to process {data}")
                     return Response(messages=[Text("something went wrong")]).model_dump(
                         mode="json"
                     )
-                if iscoroutinefunction(func):
-                    response = await func(
-                        **self.process_handler_input(func, user_message)
-                    )
-                else:
-                    response = func(**self.process_handler_input(func, user_message))
-                await self.message(user_message.message)
-                return self._process_response(response).model_dump(mode="json")
+
+                await func(**self.process_handler_input(func, message))
+                await message.send.send_message(None, message.send.user_message_id, True, "finish")
+                return 200
 
             return wrapper
 
