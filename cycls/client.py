@@ -9,7 +9,7 @@ import asyncio
 import re
 
 from .UI import Text, Image
-from .configuration import AppConfiguration, AppNameLocale, ImageUploader
+from .configuration import AppConfiguration
 from .typings import (
     InputTypeHint,
     UserMessage,
@@ -116,11 +116,20 @@ class Cycls:
     def app(
         self,
         handler: str,
+        name: str | None = None,
+        image: str | None = None,
+        introduction: str| None = None,
+        suggestions: list[str] | None = None
     ):
         """ """
         app_handler = self.extract_handler_name(handler)
         config = AppConfiguration(
-            handler=app_handler
+            handler=app_handler,
+            name=name,
+            image=image,
+            introduction=introduction,
+            suggestions=suggestions
+
         )
 
         def decorator(func):
