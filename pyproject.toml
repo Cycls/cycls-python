@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "cycls"
-version = "0.0.3.0"
-description = "Cycls SDK to ingerate your Marid with Sarya Users"
+version = "0.0.1.2"
+description = "Publish your chat app with cycls"
 authors = ["Khalid Alrasheed <khalid@cycls.io>"]
 packages = [{ include = "cycls" }]
 
@@ -11,7 +11,7 @@ asyncio = "^3.4.3"
 certifi = "^2023.11.17"
 httpx = "^0.25.2"
 pydantic = "^2.5.2"
-python-socketio = { extras = ["asyncio-client"], version = "^5.10.0" }
+python-socketio = { extras = ["asyncio-client", "client"], version = "^5.11.2" }
 
 [tool.poetry.group.dev.dependencies]
 black = { version = "^23.11.0", allow-prereleases = true }
